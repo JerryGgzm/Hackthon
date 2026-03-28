@@ -1,8 +1,10 @@
 "use client";
 
+import { motion, AnimatePresence } from "framer-motion";
 import { Loader2, CheckCircle2, AlertCircle, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { springGentle, springBouncy } from "@/lib/motion";
 import type { PipelineEvent } from "@/types";
 
 interface PipelineProgressProps {
@@ -30,7 +32,12 @@ export function PipelineProgress({
   const qualifiedCount = (filterEvent?.data?.qualified as number) ?? 0;
 
   return (
-    <div className="space-y-4 rounded-lg border border-border bg-accent/50 p-5">
+    <motion.div
+      initial={{ opacity: 0, y: -8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={springGentle}
+      className="space-y-4 rounded-xl border border-border bg-card p-5"
+    >
       <div className="flex items-center justify-between">
         <h3 className="text-sm font-semibold text-foreground">Pipeline Progress</h3>
         {isRunning && (
@@ -42,25 +49,29 @@ export function PipelineProgress({
 
       {/* Steps */}
       <div className="space-y-3 text-sm">
-        {/* Search step */}
-        {searchEvent ? (
-          <StepRow
-            done
-            label={`Found ${totalCandidates} candidate channels`}
-          />
-        ) : isRunning ? (
-          <StepRow loading label="Searching YouTube..." />
-        ) : null}
+        <AnimatePresence>
+          {/* Search step */}
+          {searchEvent ? (
+            <StepRow
+              key="search-done"
+              done
+              label={`Found ${totalCandidates} candidate channels`}
+            />
+          ) : isRunning ? (
+            <StepRow key="search-loading" loading label="Searching YouTube..." />
+          ) : null}
 
-        {/* Filter step */}
-        {filterEvent ? (
-          <StepRow
-            done
-            label={`${qualifiedCount} channels meet subscriber threshold`}
-          />
-        ) : searchEvent && isRunning ? (
-          <StepRow loading label="Filtering by subscribers..." />
-        ) : null}
+          {/* Filter step */}
+          {filterEvent ? (
+            <StepRow
+              key="filter-done"
+              done
+              label={`${qualifiedCount} channels meet subscriber threshold`}
+            />
+          ) : searchEvent && isRunning ? (
+            <StepRow key="filter-loading" loading label="Filtering by subscribers..." />
+          ) : null}
+        </AnimatePresence>
 
         {/* Processing step */}
         {progress && (
@@ -76,11 +87,13 @@ export function PipelineProgress({
             />
             {/* Progress bar */}
             <div className="ml-7 h-2 rounded-full bg-muted overflow-hidden">
-              <div
-                className="h-full rounded-full bg-primary transition-all duration-300"
-                style={{
+              <motion.div
+                className="h-full rounded-full bg-primary"
+                initial={{ width: 0 }}
+                animate={{
                   width: `${Math.round((progress.current / progress.total) * 100)}%`,
                 }}
+                transition={{ type: "spring", stiffness: 300, damping: 30 }}
               />
             </div>
           </div>
@@ -88,31 +101,46 @@ export function PipelineProgress({
       </div>
 
       {/* Error */}
-      {error && (
-        <div className="flex items-center gap-2 text-sm text-destructive">
-          <AlertCircle className="h-4 w-4 shrink-0" />
-          {error}
-        </div>
-      )}
+      <AnimatePresence>
+        {error && (
+          <motion.div
+            initial={{ opacity: 0, y: -4 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            className="flex items-center gap-2 text-sm text-destructive"
+          >
+            <AlertCircle className="h-4 w-4 shrink-0" />
+            {error}
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Summary */}
       {summary && (
         <div className="space-y-3 pt-2 border-t border-border">
           <p className="text-sm text-muted-foreground">
-            {summary.total_saved} leads saved
-            {summary.total_errors > 0 && `, ${summary.total_errors} errors`}
+            <span className="font-mono">{summary.total_saved}</span> leads saved
+            {summary.total_errors > 0 && (
+              <>, <span className="font-mono">{summary.total_errors}</span> errors</>
+            )}
           </p>
           {summary.total_saved > 0 && (
-            <Link href="/triage">
-              <Button className="w-full">
-                Go to Triage
-                <ArrowRight className="h-4 w-4" />
-              </Button>
-            </Link>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={springBouncy}
+            >
+              <Link href="/triage">
+                <Button className="w-full">
+                  Go to Triage
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+              </Link>
+            </motion.div>
           )}
         </div>
       )}
-    </div>
+    </motion.div>
   );
 }
 
@@ -126,10 +154,15 @@ function StepRow({
   label: string;
 }) {
   return (
-    <div className="flex items-center gap-2.5">
+    <motion.div
+      initial={{ opacity: 0, x: -8 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={springGentle}
+      className="flex items-center gap-2.5"
+    >
       {loading && <Loader2 className="h-4 w-4 animate-spin text-primary" />}
-      {done && <CheckCircle2 className="h-4 w-4 text-emerald-600" />}
+      {done && <CheckCircle2 className="h-4 w-4 text-success" />}
       <span className="text-muted-foreground">{label}</span>
-    </div>
+    </motion.div>
   );
 }

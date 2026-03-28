@@ -1,7 +1,9 @@
 "use client";
 
+import { motion } from "framer-motion";
 import { Badge, scoreToBadgeVariant } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { springGentle, staggerContainer, staggerChild } from "@/lib/motion";
 import type { YoutubeLead } from "@/types";
 
 interface ShortlistSidebarProps {
@@ -37,21 +39,35 @@ export function ShortlistSidebar({
     <div className="flex flex-col h-full">
       <div className="px-4 py-3 border-b border-border shrink-0">
         <h2 className="text-sm font-semibold text-foreground">
-          Approved ({leads.length})
+          Approved
+          <span className="ml-1.5 font-mono text-muted-foreground">({leads.length})</span>
         </h2>
       </div>
-      <div className="flex-1 overflow-y-auto">
+      <motion.div
+        className="flex-1 overflow-y-auto"
+        variants={staggerContainer}
+        initial="initial"
+        animate="animate"
+      >
         {leads.map((lead) => (
-          <button
+          <motion.button
             key={lead.id}
+            variants={staggerChild}
+            transition={springGentle}
             type="button"
             onClick={() => onSelect(lead.id)}
             className={cn(
               "w-full text-left px-4 py-3 border-b border-border transition-colors",
               selectedId === lead.id
-                ? "bg-primary/5 border-l-2 border-l-primary"
-                : "hover:bg-accent border-l-2 border-l-transparent"
+                ? "bg-primary/5"
+                : "hover:bg-accent"
             )}
+            style={{
+              boxShadow:
+                selectedId === lead.id
+                  ? "inset 3px 0 0 0 #FF7F00, 0 0 12px rgba(255,127,0,0.08)"
+                  : "inset 3px 0 0 0 transparent",
+            }}
           >
             <div className="flex items-center justify-between gap-2">
               <span className="font-medium text-sm text-foreground truncate">
@@ -61,9 +77,9 @@ export function ShortlistSidebar({
                 {lead.match_score}
               </Badge>
             </div>
-          </button>
+          </motion.button>
         ))}
-      </div>
+      </motion.div>
     </div>
   );
 }

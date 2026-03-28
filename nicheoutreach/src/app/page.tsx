@@ -1,10 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { Search } from "lucide-react";
+import Image from "next/image";
+import { motion } from "framer-motion";
 import { ContextForm } from "@/components/context-form";
 import { PipelineProgress } from "@/components/pipeline-progress";
 import { usePipeline } from "@/hooks/use-pipeline";
+import { springGentle, fadeUp } from "@/lib/motion";
 
 export default function HomePage() {
   const [contextId, setContextId] = useState<string | null>(null);
@@ -17,11 +19,22 @@ export default function HomePage() {
 
   return (
     <div className="flex-1 overflow-y-auto">
-      <div className="max-w-2xl mx-auto px-4 py-10">
+      <motion.div
+        className="max-w-2xl mx-auto px-4 py-10"
+        variants={fadeUp}
+        initial="initial"
+        animate="animate"
+        transition={springGentle}
+      >
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 mb-4">
-            <Search className="h-6 w-6 text-primary" />
-          </div>
+          <Image
+            src="/logo.jpg"
+            alt="NicheOutreach Logo"
+            width={72}
+            height={72}
+            className="mx-auto mb-4 rounded-2xl"
+            priority
+          />
           <h1 className="text-2xl font-bold text-foreground">NicheOutreach</h1>
           <p className="text-muted-foreground mt-1">
             Find and reach YouTube creators who match your product
@@ -46,7 +59,7 @@ export default function HomePage() {
             />
           )}
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }

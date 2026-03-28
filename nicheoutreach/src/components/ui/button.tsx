@@ -1,7 +1,7 @@
 import { forwardRef, type ButtonHTMLAttributes } from "react";
 import { cn } from "@/lib/utils";
 
-type ButtonVariant = "default" | "outline" | "ghost" | "destructive";
+type ButtonVariant = "default" | "outline" | "ghost" | "destructive" | "success";
 type ButtonSize = "default" | "sm" | "lg";
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -14,6 +14,7 @@ const variantStyles: Record<ButtonVariant, string> = {
   outline: "border border-border bg-white hover:bg-accent text-foreground",
   ghost: "hover:bg-accent text-foreground",
   destructive: "bg-destructive text-white hover:bg-destructive/90",
+  success: "bg-success text-white hover:bg-success/90",
 };
 
 const sizeStyles: Record<ButtonSize, string> = {
@@ -28,7 +29,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       <button
         ref={ref}
         className={cn(
-          "inline-flex items-center justify-center gap-2 rounded-md font-medium transition-colors",
+          "inline-flex items-center justify-center gap-2 rounded-lg font-medium transition-colors",
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50",
           "disabled:pointer-events-none disabled:opacity-50",
           variantStyles[variant],

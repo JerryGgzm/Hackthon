@@ -3,6 +3,8 @@
 import { useCallback } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 import { useUpdateLeadStatus } from "@/hooks/use-leads";
+import { useAnimationStore } from "@/stores/animation-store";
+import { useTriageStore } from "@/stores/triage-store";
 import type { YoutubeLead } from "@/types";
 
 interface TriageKeyboardOptions {
@@ -31,7 +33,29 @@ export function useTriageKeyboard({
   const approve = useCallback(() => {
     const lead = leads[selectedIndex];
     if (!lead) return;
-    updateStatus.mutate({ id: lead.id, status: "approved" });
+
+    // Capture card position for fly animation
+    const cardEl = useTriageStore.getState().cardRefs.get(lead.id);
+    const sourceRect = cardEl?.getBoundingClientRect();
+
+    if (sourceRect) {
+      // Enqueue fly animation
+      useAnimationStore.getState().enqueueFly({
+        id: lead.id,
+        channelName: lead.channel_name,
+        sourceRect,
+        score: lead.match_score,
+      });
+    }
+
+    // Mark as animating out
+    useTriageStore.getState().addAnimatingOut(lead.id);
+
+    // Delayed mutation so fly phantom can mount first
+    setTimeout(() => {
+      updateStatus.mutate({ id: lead.id, status: "approved" });
+    }, 80);
+
     // Keep index the same (next item slides up), clamp if at end
     if (selectedIndex >= leads.length - 1) {
       setSelectedIndex(Math.max(0, leads.length - 2));
@@ -41,7 +65,13 @@ export function useTriageKeyboard({
   const reject = useCallback(() => {
     const lead = leads[selectedIndex];
     if (!lead) return;
+
+    // Mark as animating out (fade-left exit)
+    useTriageStore.getState().addAnimatingOut(lead.id);
+
+    // Fire mutation immediately for reject
     updateStatus.mutate({ id: lead.id, status: "rejected" });
+
     if (selectedIndex >= leads.length - 1) {
       setSelectedIndex(Math.max(0, leads.length - 2));
     }

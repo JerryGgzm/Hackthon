@@ -10,7 +10,7 @@ interface BadgeProps {
 
 const variantStyles: Record<BadgeVariant, string> = {
   default: "bg-muted text-muted-foreground",
-  success: "bg-emerald-100 text-emerald-800",
+  success: "bg-success/10 text-success",
   warning: "bg-amber-100 text-amber-800",
   danger: "bg-red-100 text-red-800",
 };
@@ -19,7 +19,7 @@ export function Badge({ children, variant = "default", className }: BadgeProps) 
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium",
+        "inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium font-mono",
         variantStyles[variant],
         className
       )}

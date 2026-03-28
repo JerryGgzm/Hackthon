@@ -2,7 +2,7 @@ import { ArrowUp, ArrowDown, CornerDownLeft, Delete } from "lucide-react";
 
 export function ShortcutLegend() {
   return (
-    <div className="flex items-center justify-center gap-6 px-4 py-2.5 border-t border-border bg-accent/50 text-xs text-muted-foreground shrink-0">
+    <div className="glass-nav flex items-center justify-center gap-6 px-4 py-2.5 text-xs text-muted-foreground shrink-0">
       <Shortcut icon={<ArrowUp className="h-3 w-3" />} keys={["\u2191"]} label="Previous" />
       <Shortcut icon={<ArrowDown className="h-3 w-3" />} keys={["\u2193"]} label="Next" />
       <Shortcut
@@ -32,7 +32,7 @@ function Shortcut({
       {keys.map((key) => (
         <kbd
           key={key}
-          className="inline-flex items-center justify-center min-w-[22px] h-5 px-1.5 rounded border border-border bg-white text-[10px] font-mono font-medium"
+          className="inline-flex items-center justify-center min-w-[22px] h-5 px-1.5 rounded-md border border-border bg-white text-[10px] font-mono font-medium transition-transform hover:scale-105"
         >
           {key}
         </kbd>

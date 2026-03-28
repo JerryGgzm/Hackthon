@@ -1,17 +1,18 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter, JetBrains_Mono } from "next/font/google";
 import { Toaster } from "sonner";
 import { Providers } from "@/components/providers";
 import { NavBar } from "@/components/nav-bar";
+import { FlyAnimationLayer } from "@/components/fly-animation-layer";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const jetbrainsMono = JetBrains_Mono({
+  variable: "--font-jetbrains",
   subsets: ["latin"],
 });
 
@@ -28,7 +29,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${inter.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
       <body className="h-full flex flex-col">
         <Providers>
@@ -36,7 +37,20 @@ export default function RootLayout({
           <main className="flex-1 flex flex-col overflow-hidden">
             {children}
           </main>
-          <Toaster position="bottom-right" richColors />
+          <FlyAnimationLayer />
+          <Toaster
+            position="bottom-center"
+            toastOptions={{
+              className: "glass-tooltip !text-foreground !text-sm",
+              style: {
+                backdropFilter: "blur(16px)",
+                WebkitBackdropFilter: "blur(16px)",
+                background: "rgba(255, 255, 255, 0.92)",
+                border: "1px solid rgba(0, 0, 0, 0.08)",
+                boxShadow: "0 4px 24px rgba(0, 0, 0, 0.06)",
+              },
+            }}
+          />
         </Providers>
       </body>
     </html>

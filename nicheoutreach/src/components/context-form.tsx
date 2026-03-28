@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useEffect, useCallback } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -133,15 +134,24 @@ export function ContextForm({ onContextSaved, disabled }: ContextFormProps) {
         disabled={isDisabled}
       />
 
-      <Button type="submit" size="lg" className="w-full" disabled={isDisabled}>
-        {saveContext.isPending ? "Saving..." : "Start Crawling"}
-      </Button>
+      <motion.div whileTap={{ scale: 0.97 }}>
+        <Button type="submit" size="lg" className="w-full" disabled={isDisabled}>
+          {saveContext.isPending ? "Saving..." : "Start Crawling"}
+        </Button>
+      </motion.div>
 
-      {saveContext.isError && (
-        <p className="text-sm text-destructive">
-          Error: {saveContext.error?.message}
-        </p>
-      )}
+      <AnimatePresence>
+        {saveContext.isError && (
+          <motion.p
+            initial={{ opacity: 0, y: -4 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -4 }}
+            className="text-sm text-destructive"
+          >
+            Error: {saveContext.error?.message}
+          </motion.p>
+        )}
+      </AnimatePresence>
     </form>
   );
 }
